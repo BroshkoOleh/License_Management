@@ -1,3 +1,5 @@
+"use client";
+
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
@@ -6,20 +8,22 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import { Fragment } from "react";
-import { CurrentUserType } from "../../../types/types";
+
 import { USER_ROLE } from "../../../utils/helpers/constants";
 import { memo } from "react";
+import { useStore } from "../../../store/useStore";
 
 import Link from "next/link";
 
 interface NavigationMenuContentrProps {
-  currentUser: CurrentUserType;
   handleDrawerToggle: () => void;
 }
 
 // MobileSideBarMenu
 
-function NavigationMenuContent({ currentUser, handleDrawerToggle }: NavigationMenuContentrProps) {
+function NavigationMenuContent({ handleDrawerToggle }: NavigationMenuContentrProps) {
+  const currentUser = useStore((state) => state.enhancedUser);
+
   return (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
       <Typography variant="h6" sx={{ my: 2 }}>

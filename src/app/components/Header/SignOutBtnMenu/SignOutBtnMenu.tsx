@@ -9,11 +9,21 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import Logout from "@mui/icons-material/Logout";
 import { useState, memo } from "react";
 import { CurrentUserType } from "../../../types/types";
+import { useSnackbar } from "notistack";
+import { useRouter } from "next/navigation";
+import { useStore } from "../../../store/useStore";
+import { USER_AUTH_STATES } from "../../../utils/helpers/constants";
+
+import { signOutUser } from "../../../utils/firebase/firebaseAuth";
 interface SignOutMenuProps {
   currentUser: CurrentUserType;
 }
 function SignOutBtnMenu({ currentUser }: SignOutMenuProps) {
   const [anchorEl, setAnchorEl] = useState(null);
+  const logoutUser = useStore((state) => state.logoutUser);
+
+  const { enqueueSnackbar } = useSnackbar();
+  const router = useRouter();
 
   const handleMenuOpen = (event: any) => {
     setAnchorEl(event.currentTarget);
@@ -21,17 +31,23 @@ function SignOutBtnMenu({ currentUser }: SignOutMenuProps) {
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
-  // const handleSignOut = async () => {
-  //   try {
-  //     await signOutUser();
-  //     navigate("/");
-  //   } catch (error) {
-  //     enqueueSnackbar("Sign out failed. Please try again.", {
-  //       variant: "error",
-  //     });
-  //     console.log("sign out failed: ", error);
-  //   }
-  // };
+
+  const handleSignOut = async () => {
+    try {
+      await signOutUser();
+      logoutUser(USER_AUTH_STATES.SIGNED_OUT);
+      router.push("/");
+
+      enqueueSnackbar("You have successfully signed out.", {
+        variant: "success",
+      });
+    } catch (error) {
+      enqueueSnackbar("Sign out failed. Please try again.", {
+        variant: "error",
+      });
+      console.log("sign out failed: ", error);
+    }
+  };
 
   return (
     <Box display="flex" alignItems="center">
@@ -90,9 +106,7 @@ function SignOutBtnMenu({ currentUser }: SignOutMenuProps) {
         <MenuItem disabled>{`Status: ${currentUser.role}`}</MenuItem>
         <Divider />
 
-        <MenuItem
-        //  onClick={handleSignOut}
-        >
+        <MenuItem onClick={handleSignOut}>
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>

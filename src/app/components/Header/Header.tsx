@@ -1,5 +1,5 @@
 "use client";
-import { useState, Fragment, useEffect } from "react";
+import { useState } from "react";
 
 // import { useSnackbar } from "notistack";
 
@@ -21,21 +21,20 @@ import { useMediaQuery } from "@mui/material";
 import HeaderNavDesktop from "./HeaderNavDesktop/HeaderNavDesktop";
 import SignOutBtnMenu from "./SignOutBtnMenu/SignOutBtnMenu";
 import MobileNavDrawer from "./MobileNavDrawer/MobileNavDrawer";
-import { CurrentUserType } from "../../types/types";
+
 import Logo from "./Logo/Logo";
+import { useStore } from "../../store/useStore";
 
 // const drawerWidth = 240;
 
 const Header = () => {
   const isMobile = useMediaQuery("(max-width: 1024px)");
-  const isSmallScreen = useMediaQuery("(max-width: 600px)");
   const hide = useHideOnScroll();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const currentUser: CurrentUserType = { displayName: "oleg", role: "Admin" };
+  const currentUser = useStore((state) => state.enhancedUser);
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
-  // const currentUser = useSelector(selectEnhancedUser);
 
   return (
     <Box>
@@ -83,7 +82,6 @@ const Header = () => {
         mobileOpen={mobileOpen}
         handleDrawerToggle={handleDrawerToggle}
         isMobile={isMobile}
-        currentUser={currentUser}
       />
     </Box>
   );
