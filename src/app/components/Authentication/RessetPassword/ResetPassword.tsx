@@ -1,5 +1,5 @@
-// import { useSnackbar } from "notistack";
-// import { sendResetPasswordEmail } from "../../utils/firebase/firebase-auth.utils";
+import { useSnackbar } from "notistack";
+
 import { sendResetPasswordEmail } from "../../../utils/firebase/firebaseAuth";
 import { Box, Button, Paper, Typography } from "@mui/material";
 import { Form, Formik } from "formik";
@@ -12,7 +12,7 @@ interface ResetPasswordFormProps {
 }
 
 export const ResetPasswordForm = ({ setRefresherOpen, email }: ResetPasswordFormProps) => {
-  //   const { enqueueSnackbar } = useSnackbar();
+  const { enqueueSnackbar } = useSnackbar();
 
   const handleReset = async (
     values: { email: string },
@@ -23,13 +23,13 @@ export const ResetPasswordForm = ({ setRefresherOpen, email }: ResetPasswordForm
     try {
       await sendResetPasswordEmail(email);
       console.log(`Password reset email successfully sent to "${email}".`);
-      //   enqueueSnackbar(`Password reset email successfully sent to "${email}".`, {
-      //     variant: "success",
-      //   });
+      enqueueSnackbar(`Password reset email successfully sent to "${email}".`, {
+        variant: "success",
+      });
     } catch (error) {
-      //   enqueueSnackbar(`Failed to reset the password of the user "${email}". Please try again`, {
-      //     variant: "error",
-      //   });
+      enqueueSnackbar(`Failed to reset the password of the user "${email}". Please try again`, {
+        variant: "error",
+      });
       console.log(`Failed to reset the password of the user "${email}". Please try again`);
     }
   };

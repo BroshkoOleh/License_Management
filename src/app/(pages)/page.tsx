@@ -1,17 +1,17 @@
 "use client";
 import { useEffect } from "react";
-import { onAuthStateChangedListener } from "./utils/firebase/firebaseAuth";
+import { onAuthStateChangedListener } from "../utils/firebase/firebaseAuth";
 import { User } from "firebase/auth";
-import Auth from "./components/Authentication/Auth/Auth";
-import { useStore } from "./store/useStore";
-import { USER_AUTH_STATES } from "./utils/helpers/constants";
+import Auth from "../components/Authentication/Auth/Auth";
+import { useStore } from "../store/useStore";
+import { USER_AUTH_STATES } from "../utils/helpers/constants";
 import {
   FIREBASE_COLLECTION_NAMES,
   getEntry,
   getCollection,
   onCollectionChangedListener,
-} from "./utils/firebase/firebaseFirestore";
-
+} from "../utils/firebase/firebaseFirestore";
+import LoadingSpinner from "../components/Loading/LoadingSpinner/LoadingSpinner";
 // Auth User
 
 // export const USER_AUTH_STATES = {
@@ -36,6 +36,7 @@ export default function Home() {
 
   useEffect(() => {
     const unsub = onAuthStateChangedListener((user: User | null) => {
+      console.log("user////////////////////////////", user);
       if (user) {
         setUser(user, USER_AUTH_STATES.SIGNED_IN_STARTED);
       } else {
@@ -54,16 +55,16 @@ export default function Home() {
       authStatus === USER_AUTH_STATES.SIGNED_IN_FINISHED
     ) {
       const getCurrentUser = async () => {
-        const userData = await getEntry(FIREBASE_COLLECTION_NAMES.USERS, authUser?.email);
-
-        const enhancedUserData = userData
-          ? {
-              displayName: userData.displayName || "",
-              role: userData.role || "",
-            }
-          : null;
-
-        setEnhancedUser(enhancedUserData, USER_AUTH_STATES.SIGNED_IN_FINISHED);
+        if (authUser && authUser.email) {
+          const userData = await getEntry(FIREBASE_COLLECTION_NAMES.USERS, authUser.email);
+          const enhancedUserData = userData
+            ? {
+                displayName: userData.displayName || "",
+                role: userData.role || "",
+              }
+            : null;
+          setEnhancedUser(enhancedUserData, USER_AUTH_STATES.SIGNED_IN_FINISHED);
+        }
       };
       getCurrentUser();
       const unsub = onCollectionChangedListener(FIREBASE_COLLECTION_NAMES.USERS, () =>
@@ -73,5 +74,5 @@ export default function Home() {
     }
   }, [authUser, authStatus]);
 
-  return <Auth />;
+  return authStatus === USER_AUTH_STATES.SIGNED_IN_STARTED ? <LoadingSpinner /> : <Auth />;
 }

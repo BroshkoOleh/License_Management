@@ -43,7 +43,14 @@ export const SignInForm = ({ setRefresherOpen, setEmail }: SignInFormProps) => {
   };
 
   return (
-    <Paper elevation={2} sx={{ width: 500, padding: 4, margin: 4 }}>
+    <Paper
+      elevation={2}
+      sx={{
+        // width: 500,
+        padding: 4,
+        margin: 4,
+      }}
+    >
       <Typography variant="h6" component="div" textAlign="center">
         Sign in with your email address and password
       </Typography>

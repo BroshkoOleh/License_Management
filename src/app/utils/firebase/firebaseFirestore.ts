@@ -9,6 +9,11 @@ import {
   onSnapshot,
   getCountFromServer,
   updateDoc,
+  DocumentData,
+  UpdateData,
+  QuerySnapshot,
+  FirestoreError,
+  QueryConstraint,
 } from "firebase/firestore";
 
 import { db } from "./firebase";
@@ -32,7 +37,11 @@ export const FIREBASE_COLLECTION_NAMES = {
 // Methods
 //
 
-export const updateEntry = async (collectionName, path, newData) => {
+export const updateEntry = async (
+  collectionName: string,
+  path: string,
+  newData: UpdateData<DocumentData>
+) => {
   try {
     const docRef = doc(db, collectionName, path);
     await updateDoc(docRef, newData);
@@ -40,13 +49,22 @@ export const updateEntry = async (collectionName, path, newData) => {
     console.log(`Error updating entry at ${path} in ${collectionName}: ${error}`);
   }
 };
+export const getUserRole = async (email: string) => {
+  try {
+    const userDoc = await getEntry(FIREBASE_COLLECTION_NAMES.USERS, email);
+    return userDoc?.role || null;
+  } catch (error) {
+    console.log(`Error getting role for user ${email}: ${error}`);
+    return null;
+  }
+};
 
-export const getCollection = async (collectionName) => {
+export const getCollection = async (collectionName: string): Promise<DocumentData[]> => {
   const collectionRef = collection(db, collectionName);
   const q = query(collectionRef);
 
   const querySnapshot = await getDocs(q);
-  const coll = querySnapshot.docs.reduce((acc, docSnapshot) => {
+  const coll = querySnapshot.docs.reduce<DocumentData[]>((acc, docSnapshot) => {
     acc.push(docSnapshot.data());
     return acc;
   }, []);
@@ -54,7 +72,7 @@ export const getCollection = async (collectionName) => {
   return coll;
 };
 
-export const getEntry = async (collectionName, path) => {
+export const getEntry = async (collectionName: string, path: string) => {
   try {
     const docRef = doc(db, collectionName, path);
     const snapshot = await getDoc(docRef);
@@ -65,18 +83,22 @@ export const getEntry = async (collectionName, path) => {
   }
 };
 
-export const countDocs = async (collectionName, condition) => {
+export const countDocs = async (
+  collectionName: string,
+  ...conditions: QueryConstraint[]
+): Promise<number> => {
   try {
     const collectionRef = collection(db, collectionName);
-    const q = query(collectionRef, condition);
+    const q = query(collectionRef, ...conditions);
     const snapshot = await getCountFromServer(q);
     return snapshot.data().count;
   } catch (error) {
     console.log(`error occured during query: `, error);
+    return 0;
   }
 };
 
-export const addEntry = async (collectionName, path, data) => {
+export const addEntry = async (collectionName: string, path: string, data: DocumentData) => {
   const createdAt = new Date();
 
   try {
@@ -96,7 +118,7 @@ export const addEntry = async (collectionName, path, data) => {
   }
 };
 
-export const deleteEntry = async (collectionName, path) => {
+export const deleteEntry = async (collectionName: string, path: string) => {
   try {
     const docRef = doc(db, collectionName, path);
     await deleteDoc(docRef);
@@ -105,7 +127,12 @@ export const deleteEntry = async (collectionName, path) => {
   }
 };
 
-export const replaceEntry = async (collectionName, oldPath, newPath, data) => {
+export const replaceEntry = async (
+  collectionName: string,
+  oldPath: string,
+  newPath: string,
+  data: DocumentData
+) => {
   try {
     await deleteEntry(collectionName, oldPath);
     await addEntry(collectionName, newPath, data);
@@ -114,5 +141,9 @@ export const replaceEntry = async (collectionName, oldPath, newPath, data) => {
   }
 };
 
-export const onCollectionChangedListener = (collectionName, callback) =>
-  onSnapshot(query(collection(db, collectionName)), callback);
+export const onCollectionChangedListener = (
+  collectionName: string,
+  callback: (snapshot: QuerySnapshot, error?: FirestoreError) => void
+): (() => void) => {
+  return onSnapshot(query(collection(db, collectionName)), callback);
+};
