@@ -2,8 +2,9 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useStore } from "../store/useStore";
 import { USER_AUTH_STATES } from "../utils/helpers/constants";
+import { useAuthStatus } from "../store/storeHooks/useAuthStatus";
+import { useEnhancedUser } from "../store/storeHooks/useEnhancedUser";
 
 /**
  * Hook to protect routes based on user roles.
@@ -13,8 +14,9 @@ import { USER_AUTH_STATES } from "../utils/helpers/constants";
  */
 export function useProtectedRoute(allowedRoles: string[] = [], redirectPath: string = "/licenses") {
   const router = useRouter();
-  const authStatus = useStore((state) => state.authStatus);
-  const enhancedUser = useStore((state) => state.enhancedUser);
+  const authStatus = useAuthStatus();
+  console.log(authStatus, authStatus);
+  const enhancedUser = useEnhancedUser();
 
   useEffect(() => {
     // Check if authentication state is still unknown

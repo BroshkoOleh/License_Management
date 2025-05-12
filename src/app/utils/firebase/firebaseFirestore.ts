@@ -9,7 +9,6 @@ import {
   onSnapshot,
   getCountFromServer,
   updateDoc,
-  DocumentData,
   UpdateData,
   QuerySnapshot,
   FirestoreError,
@@ -17,6 +16,7 @@ import {
 } from "firebase/firestore";
 
 import { db } from "./firebase";
+import { User } from "../../types/types";
 
 //
 // Colection Names
@@ -40,7 +40,7 @@ export const FIREBASE_COLLECTION_NAMES = {
 export const updateEntry = async (
   collectionName: string,
   path: string,
-  newData: UpdateData<DocumentData>
+  newData: UpdateData<User>
 ) => {
   try {
     const docRef = doc(db, collectionName, path);
@@ -49,40 +49,43 @@ export const updateEntry = async (
     console.log(`Error updating entry at ${path} in ${collectionName}: ${error}`);
   }
 };
-export const getUserRole = async (email: string) => {
-  try {
-    const userDoc = await getEntry(FIREBASE_COLLECTION_NAMES.USERS, email);
-    return userDoc?.role || null;
-  } catch (error) {
-    console.log(`Error getting role for user ${email}: ${error}`);
-    return null;
-  }
-};
 
-export const getCollection = async (collectionName: string): Promise<DocumentData[]> => {
+// export const getCollection = async (collectionName: string) => {
+//   const collectionRef = collection(db, collectionName);
+//   const q = query(collectionRef);
+
+//   const querySnapshot = await getDocs(q);
+//   const coll = querySnapshot.docs.reduce((acc, docSnapshot) => {
+//     acc.push(docSnapshot.data());
+//     return acc;
+//   }, []);
+
+//   return coll;
+// };
+
+export const getCollection = async <T>(collectionName: string): Promise<T[]> => {
   const collectionRef = collection(db, collectionName);
   const q = query(collectionRef);
 
   const querySnapshot = await getDocs(q);
-  const coll = querySnapshot.docs.reduce<DocumentData[]>((acc, docSnapshot) => {
-    acc.push(docSnapshot.data());
-    return acc;
-  }, []);
+  const coll = querySnapshot.docs.map((docSnapshot) => {
+    return docSnapshot.data() as T;
+  });
 
   return coll;
 };
 
-export const getEntry = async (collectionName: string, path: string) => {
+export const getEntry = async <T>(collectionName: string, path: string): Promise<T | undefined> => {
   try {
     const docRef = doc(db, collectionName, path);
     const snapshot = await getDoc(docRef);
-    const result = snapshot.data();
+    const result = snapshot.data() as T;
     return result;
   } catch (error) {
     console.log(`Error getting ${path} in ${collectionName}`, error);
+    return undefined;
   }
 };
-
 export const countDocs = async (
   collectionName: string,
   ...conditions: QueryConstraint[]
@@ -98,16 +101,13 @@ export const countDocs = async (
   }
 };
 
-export const addEntry = async (collectionName: string, path: string, data: DocumentData) => {
-  const createdAt = new Date();
-
+export const addEntry = async (collectionName: string, path: string, data: User) => {
   try {
     const docRef = doc(db, collectionName, path);
     await setDoc(
       docRef,
       {
         ...data,
-        createdAt,
       },
       {
         merge: true,
@@ -131,7 +131,7 @@ export const replaceEntry = async (
   collectionName: string,
   oldPath: string,
   newPath: string,
-  data: DocumentData
+  data: User
 ) => {
   try {
     await deleteEntry(collectionName, oldPath);

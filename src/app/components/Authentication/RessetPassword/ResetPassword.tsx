@@ -22,7 +22,7 @@ export const ResetPasswordForm = ({ setRefresherOpen, email }: ResetPasswordForm
 
     try {
       await sendResetPasswordEmail(email);
-      console.log(`Password reset email successfully sent to "${email}".`);
+
       enqueueSnackbar(`Password reset email successfully sent to "${email}".`, {
         variant: "success",
       });

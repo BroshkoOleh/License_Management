@@ -1,21 +1,39 @@
 // store.ts
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { userSlice, UserSliceT } from "./slices/userSlice";
+import { authSlice, AuthSliceT } from "./slices/authSlice";
+import { usersSlice, UsersSliceT } from "./slices/usersSlice";
+import { groupsSlice, GroupsSliceT } from "./slices/groupsSlice";
+import { generalSlice, GeneralSliceT } from "./slices/generalSlice";
 
 // Define the state type with only the userSlice
-type MyState = UserSliceT & {
-  hasHydrated: boolean;
-  setHydrated: (isHydrated: boolean) => void;
-};
+type MyState = AuthSliceT &
+  UsersSliceT &
+  GroupsSliceT &
+  GeneralSliceT & {
+    hasHydrated: boolean;
+    setHydrated: (isHydrated: boolean) => void;
+    logoutUser: (status: string) => void;
+  };
 
 // Create the store with only the userSlice
 export const useStore = create<MyState>()(
   persist(
     (set, get, store) => ({
-      ...userSlice(set, get, store),
+      ...authSlice(set, get, store),
+      ...usersSlice(set, get, store),
+      ...groupsSlice(set, get, store),
+      ...generalSlice(set, get, store),
       hasHydrated: false,
       setHydrated: (isHydrated: boolean) => set({ hasHydrated: isHydrated }),
+      logoutUser: (status) =>
+        set({
+          authStatus: status,
+          authUser: null,
+          enhancedUser: null,
+          users: [],
+          groups: [],
+        }),
     }),
     {
       name: "my-app-store",
@@ -26,8 +44,10 @@ export const useStore = create<MyState>()(
       },
       partialize: (state) => ({
         authStatus: state.authStatus,
-        user: state.user,
+        authUser: state.authUser,
         enhancedUser: state.enhancedUser,
+        users: state.users,
+        groups: state.groups,
       }),
     }
   )

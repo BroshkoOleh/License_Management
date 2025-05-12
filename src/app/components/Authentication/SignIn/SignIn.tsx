@@ -34,7 +34,7 @@ export const SignInForm = ({ setRefresherOpen, setEmail }: SignInFormProps) => {
     const { email, password } = values;
     try {
       const result = await signInUserWithEmailAndPassword(email, password);
-      console.log("Successefull Login result:", result);
+      console.log("result", result);
       resetForm();
     } catch (error) {
       setAuthError(true);

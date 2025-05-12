@@ -1,7 +1,5 @@
 "use client";
-
 import { useEffect, useState } from "react";
-import { useStore } from "../../../store/useStore";
 import { USER_AUTH_STATES } from "../../../utils/helpers/constants";
 import { useRouter } from "next/navigation";
 
@@ -11,17 +9,16 @@ import { useRouter } from "next/navigation";
 import Grid from "@mui/material/Grid";
 import { ResetPasswordForm } from "../RessetPassword/ResetPassword";
 import { SignInForm } from "../SignIn/SignIn";
+import { useAuthStatus } from "@/app/store/storeHooks/useAuthStatus";
 
 const Auth = () => {
   const router = useRouter();
-  const authStatus = useStore((state) => state.authStatus);
+  const authStatus = useAuthStatus();
   const [refresherOpen, setRefresherOpen] = useState(false);
   const [email, setEmail] = useState("");
 
   useEffect(() => {
-    console.log("authStatus in Auth useEffect", authStatus);
     if (authStatus === USER_AUTH_STATES.SIGNED_IN_FINISHED) {
-      console.log(`${authStatus} === ${USER_AUTH_STATES.SIGNED_IN_FINISHED}   in Auth useEffect  `);
       router.push("/licenses");
     }
   }, [authStatus, router]);

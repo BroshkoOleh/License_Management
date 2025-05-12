@@ -1,15 +1,6 @@
 "use client";
 import { useState } from "react";
 
-// import { useSnackbar } from "notistack";
-
-// import { selectEnhancedUser } from "../../store/user/user.selector";
-// import { signOutUser } from "../../utils/firebase/firebase-auth.utils";
-// import {
-//   updateEntry,
-//   FIREBASE_COLLECTION_NAMES,
-// } from "../../utils/firebase/firebase-firestore.utils";
-
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -24,8 +15,6 @@ import MobileNavDrawer from "./MobileNavDrawer/MobileNavDrawer";
 
 import Logo from "./Logo/Logo";
 import { useStore } from "../../store/useStore";
-
-// const drawerWidth = 240;
 
 const Header = () => {
   const isMobile = useMediaQuery("(max-width: 1024px)");

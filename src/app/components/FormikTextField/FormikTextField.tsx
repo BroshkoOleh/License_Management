@@ -1,13 +1,7 @@
 import { useField } from "formik";
 import TextField, { TextFieldProps } from "@mui/material/TextField";
 
-interface FormikTextFieldProps {
-  name: string;
-  label: string;
-  type: string;
-}
-
-const FormikTextField = ({ name, label, ...otherProps }: FormikTextFieldProps) => {
+const FormikTextField = ({ name, label, ...otherProps }: TextFieldProps) => {
   const [field, meta] = useField(name);
 
   const configTextfield: TextFieldProps = {

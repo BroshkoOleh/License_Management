@@ -6,10 +6,10 @@ import Button from "@mui/material/Button";
 import { Fragment } from "react";
 import { USER_ROLE } from "../../../utils/helpers/constants";
 import { memo } from "react";
-import { CurrentUserType } from "../../../types/types";
+import { User } from "../../../types/types";
 
 interface HeaderNavDesktopProps {
-  currentUser: CurrentUserType;
+  currentUser: User;
   isMobile: boolean;
 }
 

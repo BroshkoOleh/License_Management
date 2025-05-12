@@ -8,7 +8,7 @@ import Divider from "@mui/material/Divider";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import Logout from "@mui/icons-material/Logout";
 import { useState, memo } from "react";
-import { CurrentUserType } from "../../../types/types";
+import { User } from "../../../types/types";
 import { useSnackbar } from "notistack";
 import { useRouter } from "next/navigation";
 import { useStore } from "../../../store/useStore";
@@ -16,7 +16,7 @@ import { USER_AUTH_STATES } from "../../../utils/helpers/constants";
 
 import { signOutUser } from "../../../utils/firebase/firebaseAuth";
 interface SignOutMenuProps {
-  currentUser: CurrentUserType;
+  currentUser: User;
 }
 function SignOutBtnMenu({ currentUser }: SignOutMenuProps) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -72,6 +72,7 @@ function SignOutBtnMenu({ currentUser }: SignOutMenuProps) {
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={handleMenuClose}
+        disableScrollLock={true}
         slotProps={{
           paper: {
             elevation: 0,

@@ -27,7 +27,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "src/app/utils/firebase/firebaseAdmin.js"
+    "src/app/utils/firebase/firebaseAdmin.js",
+    "src/app/components/UsersContent"
   ],
   "exclude": ["node_modules"]
 }
