@@ -4,38 +4,37 @@ import { User } from "../../types/types";
 
 // Define the type for the user slice
 export interface AuthSliceT {
-  authStatus: string;
+  authStatus: boolean;
   authUser: string | null;
   enhancedUser: User | null;
 
-  setAuthStatus: (status: string) => void;
-  getAuthStatus: () => string;
-  setAuthUser: (user: string | null, status: string) => void;
+  setAuthStatus: (status: boolean) => void;
+  getAuthStatus: () => boolean;
+  setAuthUser: (user: string | null) => void;
   getAuthUser: () => string | null;
-  setEnhancedUser: (enhancedUser: User | null, status: string) => void;
+  setEnhancedUser: (enhancedUser: User | null) => void;
   getEnhancedUser: () => User | null;
 }
 
 // Create the slice
 export const authSlice: StateCreator<AuthSliceT> = (set, get) => ({
-  authStatus: "UNKNOWN",
+  authStatus: false,
   authUser: null,
   enhancedUser: null,
 
   setAuthStatus: (status) => set({ authStatus: status }),
   getAuthStatus: () => get().authStatus,
 
-  setAuthUser: (authUser, status) =>
+  setAuthUser: (authUser) =>
     set({
       authUser,
-      authStatus: status,
     }),
   getAuthUser: () => get().authUser,
 
-  setEnhancedUser: (enhancedUser, status) =>
+  setEnhancedUser: (enhancedUser) =>
     set({
       enhancedUser,
-      authStatus: status,
+      authStatus: true,
     }),
   getEnhancedUser: () => get().enhancedUser,
 });

@@ -12,7 +12,6 @@ import { User } from "../../../types/types";
 import { useSnackbar } from "notistack";
 import { useRouter } from "next/navigation";
 import { useStore } from "../../../store/useStore";
-import { USER_AUTH_STATES } from "../../../utils/helpers/constants";
 
 import { signOutUser } from "../../../utils/firebase/firebaseAuth";
 interface SignOutMenuProps {
@@ -34,9 +33,11 @@ function SignOutBtnMenu({ currentUser }: SignOutMenuProps) {
 
   const handleSignOut = async () => {
     try {
-      await signOutUser();
-      logoutUser(USER_AUTH_STATES.SIGNED_OUT);
-      router.push("/");
+      const response = await signOutUser();
+      if (response) {
+        logoutUser();
+        router.push("/");
+      }
 
       enqueueSnackbar("You have successfully signed out.", {
         variant: "success",

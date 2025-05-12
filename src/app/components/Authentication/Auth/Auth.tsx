@@ -18,14 +18,10 @@ const Auth = () => {
   const [email, setEmail] = useState("");
 
   useEffect(() => {
-    if (authStatus === USER_AUTH_STATES.SIGNED_IN_FINISHED) {
+    if (authStatus) {
       router.push("/licenses");
     }
   }, [authStatus, router]);
-
-  if (authStatus !== USER_AUTH_STATES.SIGNED_OUT) {
-    return null;
-  }
 
   return (
     <Grid

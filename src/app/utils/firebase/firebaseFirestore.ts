@@ -86,6 +86,7 @@ export const getEntry = async <T>(collectionName: string, path: string): Promise
     return undefined;
   }
 };
+
 export const countDocs = async (
   collectionName: string,
   ...conditions: QueryConstraint[]

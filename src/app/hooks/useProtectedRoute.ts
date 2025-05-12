@@ -2,7 +2,6 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { USER_AUTH_STATES } from "../utils/helpers/constants";
 import { useAuthStatus } from "../store/storeHooks/useAuthStatus";
 import { useEnhancedUser } from "../store/storeHooks/useEnhancedUser";
 
@@ -12,33 +11,24 @@ import { useEnhancedUser } from "../store/storeHooks/useEnhancedUser";
  * @param redirectPath - Path to redirect if access is denied (default is "/licenses").
  * @returns void
  */
-export function useProtectedRoute(allowedRoles: string[] = [], redirectPath: string = "/licenses") {
+export function useProtectedRoute(
+  allowedRoles: string[] = [],
+
+  redirectPath: string = "/licenses"
+) {
   const router = useRouter();
   const authStatus = useAuthStatus();
   console.log(authStatus, authStatus);
   const enhancedUser = useEnhancedUser();
 
   useEffect(() => {
-    // Check if authentication state is still unknown
-    if (authStatus === USER_AUTH_STATES.UNKNOWN) {
-      // State is still unknown, waiting
-      return;
-    }
-
-    // Redirect to main page if user is not authenticated
-    if (authStatus === USER_AUTH_STATES.SIGNED_OUT) {
+    if (!authStatus) {
       router.push("/");
       return;
     }
 
-    // Wait for authentication process to finish
-    if (authStatus === USER_AUTH_STATES.SIGNED_IN_STARTED) {
-      // Authentication process is ongoing, waiting
-      return;
-    }
-
     // User is authenticated, check user role
-    if (authStatus === USER_AUTH_STATES.SIGNED_IN_FINISHED && enhancedUser) {
+    if (authStatus && enhancedUser) {
       const userRole = enhancedUser.role;
 
       // Check if user has required role
@@ -51,8 +41,8 @@ export function useProtectedRoute(allowedRoles: string[] = [], redirectPath: str
 
   // Return authentication state for ease of use
   return {
-    isAuthenticated: authStatus === USER_AUTH_STATES.SIGNED_IN_FINISHED,
-    isLoading: authStatus === USER_AUTH_STATES.SIGNED_IN_STARTED,
+    isAuthenticated: authStatus,
+    // isLoading: authStatus === USER_AUTH_STATES.SIGNED_IN_STARTED,
     userRole: enhancedUser?.role,
   };
 }

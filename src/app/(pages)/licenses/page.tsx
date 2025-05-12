@@ -1,36 +1,13 @@
 "use client";
 
-// Приклад сторінки Licenses
-import { useProtectedRoute } from "../../hooks/useProtectedRoute";
+import LicensesContent from "@/app/components/LicensesContent/LicensesContent";
+import ProtectedPage from "@/app/components/Authentication/ProtectedPage/ProtectedPage";
 import { USER_ROLE } from "../../utils/helpers/constants";
-
-import LoadingSpinner from "../../components/Loading/LoadingSpinner/LoadingSpinner";
-
 const LicensesPage = () => {
-  const { isLoading, userRole } = useProtectedRoute([
-    USER_ROLE.ADMIN,
-    USER_ROLE.EDITOR,
-    USER_ROLE.VIEWER,
-  ]);
-
-  if (isLoading) {
-    return <LoadingSpinner />;
-  }
-
   return (
-    <div>
-      <h1>Licenses Management</h1>
-
-      <p>Welcome, {userRole} user!</p>
-
-      {userRole === USER_ROLE.ADMIN && (
-        <div>
-          <p>Special admin controls visible only to administrators.</p>
-          {/* Додаткові елементи для адміністраторів */}
-        </div>
-      )}
-      {/* Інші компоненти сторінки */}
-    </div>
+    <ProtectedPage allowedRoles={[USER_ROLE.ADMIN, USER_ROLE.EDITOR, USER_ROLE.VIEWER]}>
+      <LicensesContent />
+    </ProtectedPage>
   );
 };
 

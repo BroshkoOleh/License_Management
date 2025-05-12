@@ -1,21 +1,12 @@
 "use client";
-
-import { useProtectedRoute } from "../../hooks/useProtectedRoute";
+import AppsContent from "@/app/components/AppsContent/AppsContent";
+import ProtectedPage from "@/app/components/Authentication/ProtectedPage/ProtectedPage";
 import { USER_ROLE } from "../../utils/helpers/constants";
-import LoadingSpinner from "../../components/Loading/LoadingSpinner/LoadingSpinner";
-
 const AppsPage = () => {
-  const { isLoading } = useProtectedRoute([USER_ROLE.ADMIN]);
-
-  if (isLoading) {
-    return <LoadingSpinner />;
-  }
-
   return (
-    <div>
-      <h1>Apps Page</h1>
-      <p>This page is only accessible by administrators.</p>
-    </div>
+    <ProtectedPage allowedRoles={[USER_ROLE.ADMIN]}>
+      <AppsContent />
+    </ProtectedPage>
   );
 };
 

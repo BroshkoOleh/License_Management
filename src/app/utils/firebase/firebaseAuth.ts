@@ -45,7 +45,7 @@ export const signInUserWithEmailAndPassword = async (
 
     return result;
   } catch (error) {
-    console.error("Login failed:", error);
+    // console.error("Login failed:", error);
     throw error;
   }
 };
@@ -65,10 +65,10 @@ export const sendResetPasswordEmail = async (email: string): Promise<void | unde
 //  * Signs out current user
 //  * @returns Promise resolving to void
 //  */
-export const signOutUser = async (): Promise<void> => {
+export const signOutUser = async (): Promise<{ success: boolean }> => {
   try {
     // Виходимо з Firebase Auth
-    await signOut(auth);
+    const response = await signOut(auth);
 
     // Видаляємо сесійний токен з клієнтської сторони
     Cookies.remove("authToken");
@@ -83,8 +83,7 @@ export const signOutUser = async (): Promise<void> => {
       // Навіть якщо серверне видалення не вдалося, продовжуємо виконання
     }
 
-    // Опціонально: перенаправлення на сторінку входу
-    window.location.href = "/";
+    return { success: true };
   } catch (error) {
     console.error("Error signing out:", error);
     throw error;

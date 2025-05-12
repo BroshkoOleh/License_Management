@@ -13,7 +13,7 @@ type MyState = AuthSliceT &
   GeneralSliceT & {
     hasHydrated: boolean;
     setHydrated: (isHydrated: boolean) => void;
-    logoutUser: (status: string) => void;
+    logoutUser: () => void;
   };
 
 // Create the store with only the userSlice
@@ -26,9 +26,9 @@ export const useStore = create<MyState>()(
       ...generalSlice(set, get, store),
       hasHydrated: false,
       setHydrated: (isHydrated: boolean) => set({ hasHydrated: isHydrated }),
-      logoutUser: (status) =>
+      logoutUser: () =>
         set({
-          authStatus: status,
+          authStatus: false,
           authUser: null,
           enhancedUser: null,
           users: [],

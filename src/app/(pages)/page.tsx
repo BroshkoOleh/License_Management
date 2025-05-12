@@ -16,5 +16,5 @@ export default function Home() {
     return <div></div>;
   }
 
-  return authStatus === USER_AUTH_STATES.SIGNED_IN_STARTED ? <LoadingSpinner /> : <Auth />;
+  return authStatus ? <LoadingSpinner /> : <Auth />;
 }

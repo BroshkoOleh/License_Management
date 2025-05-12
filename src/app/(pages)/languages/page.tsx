@@ -1,22 +1,13 @@
 "use client";
 
-import { useProtectedRoute } from "../../hooks/useProtectedRoute";
+import LanguagesContent from "@/app/components/LanguagesContent/LanguagesContent";
+import ProtectedPage from "@/app/components/Authentication/ProtectedPage/ProtectedPage";
 import { USER_ROLE } from "../../utils/helpers/constants";
-import { useState, useEffect } from "react";
-import LoadingSpinner from "../../components/Loading/LoadingSpinner/LoadingSpinner";
-
 const LanguagesPage = () => {
-  const { isLoading } = useProtectedRoute([USER_ROLE.ADMIN]);
-
-  if (isLoading) {
-    return <LoadingSpinner />;
-  }
-
   return (
-    <div>
-      <h1>Languages Page</h1>
-      <p>This page is only accessible by administrators.</p>
-    </div>
+        <ProtectedPage allowedRoles={[USER_ROLE.ADMIN]}>
+      <LanguagesContent />
+    </ProtectedPage>
   );
 };
 

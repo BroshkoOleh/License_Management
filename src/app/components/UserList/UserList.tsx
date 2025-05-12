@@ -6,11 +6,14 @@ import useDebounce from "../../hooks/useDebounce";
 import { warningNoUsersResults } from "../../utils/helpers/warnings";
 import { Typography } from "@mui/material";
 import { useStore } from "../../store/useStore";
+import { useAuthStatus } from "@/app/store/storeHooks/useAuthStatus";
 
 const UserList = () => {
   const hasHydrated = useStore((state) => state.hasHydrated);
+  const authStatus = useAuthStatus();
 
-  const users = useStore().getUsers();
+  const usersStore = useStore().getUsers();
+  const users = authStatus ? usersStore : [];
 
   const queryLanguages = useStore((state) => state.searchString);
   const debounceQuery = useDebounce(queryLanguages, 500);

@@ -20,7 +20,6 @@ import {
 } from "../utils/firebase/firebaseFirestore";
 import LoadingSpinner from "../components/Loading/LoadingSpinner/LoadingSpinner";
 import { User, Group } from "../types/types";
-import { getAuth } from "firebase/auth";
 
 export default function App({ children }: { children: ReactNode }) {
   const hasHydrated = useStore((state) => state.hasHydrated);
@@ -35,9 +34,9 @@ export default function App({ children }: { children: ReactNode }) {
   useEffect(() => {
     const unsub = onAuthStateChangedListener((user) => {
       if (user) {
-        setAuthUser(user?.email, USER_AUTH_STATES.SIGNED_IN_STARTED);
+        setAuthUser(user?.email);
       } else {
-        logoutUser(USER_AUTH_STATES.SIGNED_OUT);
+        logoutUser();
       }
     });
     return () => unsub();
@@ -45,15 +44,12 @@ export default function App({ children }: { children: ReactNode }) {
 
   // Enhanced User
   useEffect(() => {
-    if (
-      authStatus === USER_AUTH_STATES.SIGNED_IN_STARTED ||
-      authStatus === USER_AUTH_STATES.SIGNED_IN_FINISHED
-    ) {
+    if (authUser) {
       const getCurrentUser = async () => {
-        if (authUser) {
-          const userData = await getEntry<User>(FIREBASE_COLLECTION_NAMES.USERS, authUser);
+        const userData = await getEntry<User>(FIREBASE_COLLECTION_NAMES.USERS, authUser);
 
-          userData ? setEnhancedUser(userData, USER_AUTH_STATES.SIGNED_IN_FINISHED) : null;
+        if (userData) {
+          setEnhancedUser(userData);
         }
       };
       getCurrentUser();
@@ -64,12 +60,9 @@ export default function App({ children }: { children: ReactNode }) {
     }
   }, [authUser, authStatus]);
 
-  // Users
+  // Users & Groups
   useEffect(() => {
-    if (
-      authStatus === USER_AUTH_STATES.SIGNED_IN_STARTED ||
-      authStatus === USER_AUTH_STATES.SIGNED_IN_FINISHED
-    ) {
+    if (authStatus && hasHydrated) {
       const getUsers = async () => {
         try {
           const users = await getCollection<User>(FIREBASE_COLLECTION_NAMES.USERS);
@@ -87,7 +80,7 @@ export default function App({ children }: { children: ReactNode }) {
       };
       getGroups();
     }
-  }, [authStatus]);
+  }, [authStatus, hasHydrated]);
 
   // Groups
   // useEffect(() => {

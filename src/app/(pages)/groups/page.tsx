@@ -1,22 +1,14 @@
 "use client";
 
-import { useProtectedRoute } from "../../hooks/useProtectedRoute";
+import GroupsContent from "@/app/components/GroupsContent/GroupsContent";
+import ProtectedPage from "@/app/components/Authentication/ProtectedPage/ProtectedPage";
 import { USER_ROLE } from "../../utils/helpers/constants";
-import LoadingSpinner from "../../components/Loading/LoadingSpinner/LoadingSpinner";
-
-const GroupPage = () => {
-  const { isLoading } = useProtectedRoute([USER_ROLE.ADMIN]);
-
-  if (isLoading) {
-    return <LoadingSpinner />;
-  }
-
+const GroupsPage = () => {
   return (
-    <div>
-      <h1>Group Page</h1>
-      <p>This page is only accessible by administrators.</p>
-    </div>
+    <ProtectedPage allowedRoles={[USER_ROLE.ADMIN]}>
+      <GroupsContent />
+    </ProtectedPage>
   );
 };
 
-export default GroupPage;
+export default GroupsPage;

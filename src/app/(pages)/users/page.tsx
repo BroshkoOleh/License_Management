@@ -1,17 +1,14 @@
 "use client";
 
-import UsersContent from "@/app/components/UsersContent/UsersContent";
-import { useProtectedRoute } from "../../hooks/useProtectedRoute";
+import UsersContent from "../../components/UsersContent/UsersContent";
+import ProtectedPage from "@/app/components/Authentication/ProtectedPage/ProtectedPage";
 import { USER_ROLE } from "../../utils/helpers/constants";
-import LoadingSpinner from "../../components/Loading/LoadingSpinner/LoadingSpinner";
-import { useStore } from "../../store/useStore";
 
-const UsersPage = () => {
-  const hasHydrated = useStore((state) => state.hasHydrated);
-
-  const { isLoading } = useProtectedRoute([USER_ROLE.ADMIN]);
-
-  return isLoading || !hasHydrated ? <LoadingSpinner /> : <UsersContent />;
-};
-
+function UsersPage() {
+  return (
+    <ProtectedPage allowedRoles={[USER_ROLE.ADMIN]}>
+      <UsersContent />
+    </ProtectedPage>
+  );
+}
 export default UsersPage;

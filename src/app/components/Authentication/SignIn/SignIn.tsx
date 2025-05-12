@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { use, useRef, useState } from "react";
 import { signInUserWithEmailAndPassword } from "../../../utils/firebase/firebaseAuth";
 import { Box, Button, Paper, Typography } from "@mui/material";
 import { Form, Formik } from "formik";
@@ -6,6 +6,10 @@ import FormikTextfield from "../../FormikTextField/FormikTextField";
 import { warningAuthNotCorrect } from "../../../utils/helpers/warnings";
 import * as Yup from "yup";
 import FormikSelect from "../../FormikSelect/FormikSelect";
+import { FIREBASE_COLLECTION_NAMES, getEntry } from "../../../utils/firebase/firebaseFirestore";
+import { User } from "../../../types/types";
+import { useStore } from "@/app/store/useStore";
+import { useRouter } from "next/navigation";
 
 const INITIAL_FORM_STATE = {
   email: "",
@@ -23,6 +27,8 @@ interface SignInFormProps {
   setEmail: (value: string) => void;
 }
 export const SignInForm = ({ setRefresherOpen, setEmail }: SignInFormProps) => {
+  const setEnhancedUser = useStore((state) => state.setEnhancedUser);
+  const router = useRouter();
   const [authError, setAuthError] = useState(false);
   const [onChange, setOnChange] = useState(false);
   const formikLoginRef = useRef(null);
@@ -34,7 +40,13 @@ export const SignInForm = ({ setRefresherOpen, setEmail }: SignInFormProps) => {
     const { email, password } = values;
     try {
       const result = await signInUserWithEmailAndPassword(email, password);
+
       console.log("result", result);
+      if (result && result.user.email) {
+        const userData = await getEntry<User>(FIREBASE_COLLECTION_NAMES.USERS, result?.user?.email);
+        setEnhancedUser(userData ? userData : null);
+      }
+      router.push("/licenses");
       resetForm();
     } catch (error) {
       setAuthError(true);
