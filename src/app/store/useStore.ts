@@ -5,11 +5,17 @@ import { authSlice, AuthSliceT } from "./slices/authSlice";
 import { usersSlice, UsersSliceT } from "./slices/usersSlice";
 import { groupsSlice, GroupsSliceT } from "./slices/groupsSlice";
 import { generalSlice, GeneralSliceT } from "./slices/generalSlice";
+import { languagesSlice, LanguagesSliceT } from "./slices/languagesSlice";
+import { featuresSlice, FeaturesSliceT } from "./slices/featuresSlice";
+import { appsSlice, AppsSliceT } from "./slices/appsSlice";
 
 // Define the state type with only the userSlice
 type MyState = AuthSliceT &
   UsersSliceT &
   GroupsSliceT &
+  LanguagesSliceT &
+  FeaturesSliceT &
+  AppsSliceT &
   GeneralSliceT & {
     hasHydrated: boolean;
     setHydrated: (isHydrated: boolean) => void;
@@ -24,6 +30,9 @@ export const useStore = create<MyState>()(
       ...usersSlice(set, get, store),
       ...groupsSlice(set, get, store),
       ...generalSlice(set, get, store),
+      ...languagesSlice(set, get, store),
+      ...featuresSlice(set, get, store),
+      ...appsSlice(set, get, store),
       hasHydrated: false,
       setHydrated: (isHydrated: boolean) => set({ hasHydrated: isHydrated }),
       logoutUser: () =>
@@ -48,6 +57,8 @@ export const useStore = create<MyState>()(
         enhancedUser: state.enhancedUser,
         users: state.users,
         groups: state.groups,
+        languages: state.languages,
+        features: state.features,
       }),
     }
   )

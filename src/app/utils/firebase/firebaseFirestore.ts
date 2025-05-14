@@ -16,7 +16,7 @@ import {
 } from "firebase/firestore";
 
 import { db } from "./firebase";
-import { User } from "../../types/types";
+import { Group, User, Language, Feature, AppType } from "../../types/types";
 
 //
 // Colection Names
@@ -40,7 +40,7 @@ export const FIREBASE_COLLECTION_NAMES = {
 export const updateEntry = async (
   collectionName: string,
   path: string,
-  newData: UpdateData<User>
+  newData: UpdateData<User | Group | Language | Feature | AppType>
 ) => {
   try {
     const docRef = doc(db, collectionName, path);
@@ -102,7 +102,11 @@ export const countDocs = async (
   }
 };
 
-export const addEntry = async (collectionName: string, path: string, data: User) => {
+export const addEntry = async (
+  collectionName: string,
+  path: string,
+  data: User | Group | Language | Feature | AppType
+) => {
   try {
     const docRef = doc(db, collectionName, path);
     await setDoc(

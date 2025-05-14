@@ -9,3 +9,19 @@ export interface Group {
   userEmails: string[];
   id: string;
 }
+
+export interface Language {
+  id: string;
+  languageCode: string;
+  languageName: string;
+}
+export interface Feature {
+  featureName: string;
+  id: string;
+  uuid: string;
+}
+export interface AppType {
+  appName: string;
+  id: string;
+  uuid: string;
+}

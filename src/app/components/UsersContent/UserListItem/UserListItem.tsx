@@ -1,15 +1,14 @@
 "use client";
 
 import { useState } from "react";
-
 import { useSnackbar } from "notistack";
-
 import { deleteUser } from "../../../utils/firebase/firebaseFunction";
 import {
   getCollection,
   deleteEntry,
   FIREBASE_COLLECTION_NAMES,
 } from "../../../utils/firebase/firebaseFirestore";
+
 import { Box, Chip, Typography } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import ListItem from "@mui/material/ListItem";

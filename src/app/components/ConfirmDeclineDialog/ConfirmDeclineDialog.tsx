@@ -10,7 +10,7 @@ interface ConfirmDeclineDialogProps {
   dialogText: string;
   confirmText: string;
   declineText: string;
-  handleConfirmAction: () => void;
+  handleConfirmAction: (event?: any) => void; // змінено тип
   handleDeclineAction: () => void;
 }
 

@@ -8,10 +8,10 @@ import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import AddIcon from "@mui/icons-material/Add";
-import UserList from "../../components/UserList/UserList";
-import UserAddDialog from "../../components/UserList/UserAddDialog/UserAddDialog";
+import UserList from "./UserList/UserList";
+import UserAddDialog from "./UserAddDialog/UserAddDialog";
 import FloatingActionButton from "../../components/FloatingActionButton/FloatingActionButton";
-import UserListSearchBar from "../../components/UserList/UserListSearchBar/UserListSearchBar";
+import UserListSearchBar from "./UserListSearchBar/UserListSearchBar";
 
 const UsersContent = () => {
   const [newUserDialog, setNewUserDialog] = useState(false);

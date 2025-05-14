@@ -1,22 +1,19 @@
 "use client";
 import List from "@mui/material/List";
-import UserListItem from "./UserListItem/UserListItem";
-import { alphanumericSort } from "../../utils/helpers/helpers";
-import useDebounce from "../../hooks/useDebounce";
-import { warningNoUsersResults } from "../../utils/helpers/warnings";
+import UserListItem from "../UserListItem/UserListItem";
+import { alphanumericSort } from "../../../utils/helpers/helpers";
+import useDebounce from "../../../hooks/useDebounce";
+import { warningNoUsersResults } from "../../../utils/helpers/warnings";
 import { Typography } from "@mui/material";
-import { useStore } from "../../store/useStore";
-import { useAuthStatus } from "@/app/store/storeHooks/useAuthStatus";
+import { useStore } from "../../../store/useStore";
+import { useUsers } from "@/app/store/storeHooks/useUsers";
 
 const UserList = () => {
   const hasHydrated = useStore((state) => state.hasHydrated);
-  const authStatus = useAuthStatus();
+  const users = useUsers();
 
-  const usersStore = useStore().getUsers();
-  const users = authStatus ? usersStore : [];
-
-  const queryLanguages = useStore((state) => state.searchString);
-  const debounceQuery = useDebounce(queryLanguages, 500);
+  const queryItems = useStore((state) => state.searchString);
+  const debounceQuery = useDebounce(queryItems, 500);
 
   const visibleUsers = users
     .filter((user) => {

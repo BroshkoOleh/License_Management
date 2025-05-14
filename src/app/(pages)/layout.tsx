@@ -19,7 +19,7 @@ import {
   onCollectionChangedListener,
 } from "../utils/firebase/firebaseFirestore";
 import LoadingSpinner from "../components/Loading/LoadingSpinner/LoadingSpinner";
-import { User, Group } from "../types/types";
+import { User, Group, Language, Feature, AppType } from "../types/types";
 
 export default function App({ children }: { children: ReactNode }) {
   const hasHydrated = useStore((state) => state.hasHydrated);
@@ -30,6 +30,9 @@ export default function App({ children }: { children: ReactNode }) {
   const setEnhancedUser = useStore((state) => state.setEnhancedUser);
   const setUsers = useStore((state) => state.setUsers);
   const setGroups = useStore((state) => state.setGroups);
+  const setLanguages = useStore((state) => state.setLanguages);
+  const setFeatures = useStore((state) => state.setFeatures);
+  const setApps = useStore((state) => state.setApps);
 
   useEffect(() => {
     const unsub = onAuthStateChangedListener((user) => {
@@ -82,6 +85,49 @@ export default function App({ children }: { children: ReactNode }) {
     }
   }, [authStatus, hasHydrated]);
 
+  // Languages
+  useEffect(() => {
+    if (authUser) {
+      const getLanguages = async () => {
+        const languages = await getCollection<Language>(FIREBASE_COLLECTION_NAMES.LANGUAGES);
+        setLanguages(languages);
+      };
+      getLanguages();
+      const unsub = onCollectionChangedListener(FIREBASE_COLLECTION_NAMES.LANGUAGES, () =>
+        getLanguages()
+      );
+      return () => unsub();
+    }
+  }, [authStatus]);
+
+  //Features
+  useEffect(() => {
+    if (authUser) {
+      const getFeatures = async () => {
+        const features = await getCollection<Feature>(FIREBASE_COLLECTION_NAMES.FEATURES);
+        setFeatures(features);
+      };
+      getFeatures();
+      const unsub = onCollectionChangedListener(FIREBASE_COLLECTION_NAMES.FEATURES, () =>
+        getFeatures()
+      );
+      return () => unsub();
+    }
+  }, [authStatus]);
+
+  // Apps
+  useEffect(() => {
+    if (authUser) {
+      const getApps = async () => {
+        const apps = await getCollection<AppType>(FIREBASE_COLLECTION_NAMES.APPS);
+        setApps(apps);
+      };
+      getApps();
+      const unsub = onCollectionChangedListener(FIREBASE_COLLECTION_NAMES.APPS, () => getApps());
+      return () => unsub();
+    }
+  }, [authStatus]);
+
   // Groups
   // useEffect(() => {
   //   if (
@@ -102,7 +148,7 @@ export default function App({ children }: { children: ReactNode }) {
   // }, [authStatus]);
 
   if (!hasHydrated) {
-    return <div></div>;
+    return <LoadingSpinner />;
   }
 
   return (

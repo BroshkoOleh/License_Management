@@ -58,12 +58,15 @@ const UserEditDialog = ({ open, handleClose, user }: UserEditDialogProps) => {
         displayName: fullName,
         role,
       });
+
       resetForm();
+
+      const newUsers = await getCollection<User>(FIREBASE_COLLECTION_NAMES.USERS);
+      setUsers(newUsers);
+
       enqueueSnackbar(`User "${user.email}" was successfully edited.`, {
         variant: "success",
       });
-      const newUsers = await getCollection<User>(FIREBASE_COLLECTION_NAMES.USERS);
-      setUsers(newUsers);
     } catch (error) {
       enqueueSnackbar(`Failed to edit the user "${fullName}". Please try again.`, {
         variant: "error",
