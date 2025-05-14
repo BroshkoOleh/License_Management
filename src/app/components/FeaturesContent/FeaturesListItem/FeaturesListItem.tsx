@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { useSnackbar } from "notistack";
-
 // import { selectConfigurations } from "../../store/configurations/configurations.selector";
-
 import {
   getCollection,
   deleteEntry,
@@ -19,31 +17,34 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { Box } from "@mui/material";
 
-import LanguageEditDialog from "../LanguageEditDialog/LanguageEditDialog";
+import FeaturesEditDialog from "../FeaturesEditDialog/FeaturesEditDialog";
 import ConfirmDeclineDialog from "../../ConfirmDeclineDialog/ConfirmDeclineDialog";
 
 import { COLOR_PURPLE, USER_ROLE } from "../../../utils/helpers/constants";
 import { useWindowWidth } from "../../../hooks/useWindowWidth";
-import { Language } from "../../../types/types";
+import { Feature } from "../../../types/types";
 import { useStore } from "@/app/store/useStore";
 
-interface LanguageListItemProps {
-  language: Language;
+interface FeatureListItemProps {
+  feature: Feature;
 }
 
-const LanguageListItem = ({ language }: LanguageListItemProps) => {
+const FeaturesListItem = ({ feature }: FeatureListItemProps) => {
   const { enqueueSnackbar } = useSnackbar();
   const windowWidth = useWindowWidth();
-  const setLanguages = useStore((state) => state.setLanguages);
+  const setFeatures = useStore((state) => state.setFeatures);
 
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   //   const allConfigurations = useSelector(selectConfigurations);
-  //   const isAssigned =
-  //     allConfigurations.filter((configuration) => {
-  //       return configuration.languageIds.includes(language.id);
-  //     }).length > 0;
+
+  //   //disable features
+  //   const isFeatureEnabled = allConfigurations.some((configuration) => {
+  //     return configuration.enabledFeatureIds.includes(feature.id);
+  //   });
+
+  //Controlls
 
   const openEditDialog = () => {
     setIsEditDialogOpen(true);
@@ -63,20 +64,20 @@ const LanguageListItem = ({ language }: LanguageListItemProps) => {
 
   const handleDelete = async () => {
     try {
-      deleteEntry(FIREBASE_COLLECTION_NAMES.LANGUAGES, language.id);
-      enqueueSnackbar(`Language "${language.languageName}" was successfully deleted.`, {
+      deleteEntry(FIREBASE_COLLECTION_NAMES.FEATURES, feature.id);
+      enqueueSnackbar(`Feature "${feature.featureName}" was successfully deleted.`, {
         variant: "success",
       });
-      const newLanguages = await getCollection<Language>(FIREBASE_COLLECTION_NAMES.LANGUAGES);
-      setLanguages(newLanguages);
+
+      const newFeatures = await getCollection<Feature>(FIREBASE_COLLECTION_NAMES.FEATURES);
+      setFeatures(newFeatures);
 
       closeDeleteDialog();
     } catch (error) {
-      enqueueSnackbar(
-        `Failed to delete the language "${language.languageName}". Please try again.`,
-        { variant: "error" }
-      );
-      console.log("language deletion failed: ", error);
+      enqueueSnackbar(`Failed to delete the feature "${feature.featureName}". Please try again.`, {
+        variant: "error",
+      });
+      console.log("feature deletion failed: ", error);
     }
   };
 
@@ -96,6 +97,7 @@ const LanguageListItem = ({ language }: LanguageListItemProps) => {
           padding: "8px",
         },
       }}
+      elevation={1}
     >
       <ListItem>
         {windowWidth > 520 && (
@@ -105,17 +107,17 @@ const LanguageListItem = ({ language }: LanguageListItemProps) => {
                 backgroundColor: `${COLOR_PURPLE}`,
               }}
             >
-              {language.languageName[0]}
+              {feature.featureName[0]}
             </Avatar>
           </ListItemAvatar>
         )}
         {windowWidth > 520 ? (
-          <ListItemText primary={language.languageName} secondary={language.languageCode} />
+          <ListItemText primary={feature.featureName} secondary={feature.uuid} />
         ) : (
           <ListItemText
             sx={{ display: "flex", flexDirection: "column" }}
-            primary={language.languageName}
-            secondary={language.languageCode}
+            primary={feature.featureName}
+            secondary={feature.uuid}
           />
         )}
         <Box display="flex" gap="10px">
@@ -131,22 +133,18 @@ const LanguageListItem = ({ language }: LanguageListItemProps) => {
           </IconButton>
           <IconButton
             color="error"
-            //   disabled={isAssigned}
+            //   disabled={isFeatureEnabled}
             onClick={openDeleteDialog}
           >
             <DeleteIcon />
           </IconButton>
         </Box>
       </ListItem>
-      <LanguageEditDialog
-        open={isEditDialogOpen}
-        handleClose={closeEditDialog}
-        language={language}
-      />
+      <FeaturesEditDialog open={isEditDialogOpen} handleClose={closeEditDialog} feature={feature} />
       <ConfirmDeclineDialog
         open={isDeleteDialogOpen}
-        dialogTitle="Delete Language Entry"
-        dialogText="Are you sure that you want to delete this language? The operation cannot be undone."
+        dialogTitle="Delete Feature"
+        dialogText="Are you sure that you want to delete this feature? The operation cannot be undone."
         confirmText="Confirm"
         declineText="Cancel"
         handleConfirmAction={handleDelete}
@@ -156,4 +154,4 @@ const LanguageListItem = ({ language }: LanguageListItemProps) => {
   );
 };
 
-export default LanguageListItem;
+export default FeaturesListItem;

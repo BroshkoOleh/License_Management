@@ -1,5 +1,5 @@
 import { useSnackbar } from "notistack";
-import { Formik, FormikHelpers, FormikProps, Form } from "formik";
+import { Formik, FormikHelpers, Form } from "formik";
 import * as Yup from "yup";
 
 import {
@@ -17,68 +17,77 @@ import Stack from "@mui/material/Stack";
 import FormikButton from "../../FormikButton/FormikButton";
 import FormikTextfield from "../../FormikTextField/FormikTextField";
 
-import { Language } from "../../../types/types";
-import { useLanguages } from "@/app/store/storeHooks/useLanguages";
-import { useStore } from "@/app/store/useStore";
+import { Feature } from "../../../types/types";
 
-interface LanguageEditDialogProps {
+import { useStore } from "@/app/store/useStore";
+import { useFeatures } from "@/app/store/storeHooks/useFeatures";
+
+interface FeaturesEditDialogProps {
   open: boolean;
   handleClose: () => void;
-  language: Language;
+  feature: Feature;
 }
 interface FormValues {
-  languageName: string;
-  languageCode: string;
+  featureName: string;
+  uuid: string;
 }
 
-const LanguageEditDialog = ({ open, handleClose, language }: LanguageEditDialogProps) => {
+const FeaturesEditDialog = ({ open, handleClose, feature }: FeaturesEditDialogProps) => {
   const { enqueueSnackbar } = useSnackbar();
 
-  const allLanguages = useLanguages();
-  const setLanguages = useStore((state) => state.setLanguages);
+  const allFeatures = useFeatures();
+  const setFeatures = useStore((state) => state.setFeatures);
 
   const handleSubmit = async (values: FormValues, { resetForm }: FormikHelpers<FormValues>) => {
-    const { languageName, languageCode } = values;
+    const { featureName, uuid } = values;
 
-    if (languageName === language.languageName && languageCode === language.languageCode) {
-      resetForm();
+    if (featureName === feature.featureName && uuid === feature.uuid) {
       handleClose();
+      resetForm();
+
       return;
     }
 
     // Close the dialog immediately
     handleClose();
 
+    const isFormat = featureName
+      .split(" ")
+      .map((word) => word[0].toUpperCase() + word.slice(1))
+      .join(" ");
+
     try {
-      updateEntry(FIREBASE_COLLECTION_NAMES.LANGUAGES, language.id, {
-        languageCode,
-        languageName,
+      await updateEntry(FIREBASE_COLLECTION_NAMES.FEATURES, feature.id, {
+        id: feature.id,
+        featureName: isFormat,
+        uuid,
       });
 
-      const newLanguages = await getCollection<Language>(FIREBASE_COLLECTION_NAMES.LANGUAGES);
-      setLanguages(newLanguages);
-      enqueueSnackbar(`Language "${languageName}" was successfully edited.`, {
+      const newFeatures = await getCollection<Feature>(FIREBASE_COLLECTION_NAMES.FEATURES);
+      setFeatures(newFeatures);
+
+      enqueueSnackbar(`Feature "${featureName}" was successfully edited.`, {
         variant: "success",
       });
 
       resetForm();
     } catch (error) {
-      enqueueSnackbar(`Failed to edit the language "${languageName}". Please try again.`, {
+      enqueueSnackbar(`Failed to edit the feature "${featureName}". Please try again.`, {
         variant: "error",
       });
-      console.log("editing language failed: ", error);
+      console.log("Editing feature failed: ", error);
     }
   };
 
   const FORM_VALIDATION = Yup.object().shape({
-    languageName: Yup.string()
-      .test("is-language-name-unique", "Already used", (value) => {
-        if (!value || value === language.languageName) {
-          return true; // Ignore validation if the value is the same as the current language name
+    featureName: Yup.string()
+      .test("is-feature-name-unique", "Already used", (value) => {
+        if (!value || value === feature.featureName) {
+          return true; // Ignore validation if the value is the same as the current feature name
         }
         return (
-          allLanguages.filter((lang) => {
-            return lang.languageName === value;
+          allFeatures.filter((feature) => {
+            return feature.featureName.localeCompare(value) === 0;
           }).length === 0
         );
       })
@@ -87,10 +96,7 @@ const LanguageEditDialog = ({ open, handleClose, language }: LanguageEditDialogP
 
   return (
     <Formik
-      initialValues={{
-        languageCode: language.languageCode,
-        languageName: language.languageName,
-      }}
+      initialValues={{ featureName: feature.featureName, uuid: feature.uuid }}
       validationSchema={FORM_VALIDATION}
       enableReinitialize={true}
       onSubmit={handleSubmit}
@@ -106,21 +112,16 @@ const LanguageEditDialog = ({ open, handleClose, language }: LanguageEditDialogP
             fullWidth
             maxWidth="xs"
           >
-            <DialogTitle>Edit Language</DialogTitle>
+            <DialogTitle>Edit Feature</DialogTitle>
             <DialogContent>
               <Stack direction="column" spacing={2} marginY={2} alignItems="start">
                 <FormikTextfield
-                  name="languageName"
+                  name="featureName"
                   fullWidth={true}
-                  label="Language Name"
+                  label="Feature Name"
                   variant="standard"
                 />
-                <FormikTextfield
-                  name="languageCode"
-                  fullWidth={true}
-                  label="Language Code"
-                  variant="standard"
-                />
+                <FormikTextfield name="uuid" fullWidth label="Feature UUID" variant="standard" />
               </Stack>
             </DialogContent>
             <DialogActions>
@@ -144,4 +145,4 @@ const LanguageEditDialog = ({ open, handleClose, language }: LanguageEditDialogP
   );
 };
 
-export default LanguageEditDialog;
+export default FeaturesEditDialog;

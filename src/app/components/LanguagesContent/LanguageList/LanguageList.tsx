@@ -4,8 +4,8 @@ import { alphanumericSort } from "../../../utils/helpers/helpers";
 import useDebounce from "../../../hooks/useDebounce";
 import { warningNoLanguagesResults } from "../../../utils/helpers/warnings";
 import { Typography } from "@mui/material";
-import { useStore } from "../../../store/useStore";
 import { useLanguages } from "@/app/store/storeHooks/useLanguages";
+import { useStore } from "../../../store/useStore";
 
 const LanguageList = () => {
   const hasHydrated = useStore((state) => state.hasHydrated);
